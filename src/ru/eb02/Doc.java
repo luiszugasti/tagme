@@ -25,15 +25,17 @@ public class Doc {
   /**
    * Constructor which assigns the docName to this instance and assigns the stripped text.
    */
-  public Doc(String docText, String docName) {
+  public Doc(String docText, String docName, String lang, RelatednessMeasure rel,
+      Disambiguator disamb, Segmentation segmentation, RhoMeasure rho, TagmeParser parser) {
     Document document = Jsoup.parse(docText, "ASCII");
     this.docName = docName;
     strippedDocText = removeStopWords(document.text());
+    this.obtainEntities(lang, rel, disamb, segmentation, rho, parser);
   }
 
   /**
    * Get Top Entities, as hardcoded
-   * @return
+   * @return this.topMap
    */
   public Map<Integer, Integer> getTopMap() {
     return topMap;
@@ -41,7 +43,7 @@ public class Doc {
 
   /**
    * Get Stripped doc text
-   * @return
+   * @return this.strippedDocText
    */
   public String getStrippedDocText() {
     return strippedDocText;
@@ -49,7 +51,7 @@ public class Doc {
 
   /**
    * Get document name
-   * @return
+   * @return this.docName
    */
   public String getDocName() {
     return docName;
@@ -57,10 +59,10 @@ public class Doc {
 
   /**
    * Get this object's entity map from top n hits, and save it
-   *
+   * @param topHits gets us *just* the top entity hits for this document.
    */
   private void saveTopHits(int topHits) {
-    // copy pasta and I barely get it
+    // copy pasta and I barely get it...
     // https://stackoverflow.com/questions/109383/sort-a-mapkey-value-by-values
     topMap =
         entityMap.entrySet().stream()

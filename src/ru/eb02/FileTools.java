@@ -80,20 +80,73 @@ public class FileTools {
       lineInfo = line.split("\\s+");
       trecTopics[Integer.parseInt(lineInfo[0]) - 1].addDocument(
           lineInfo[2],
-          Integer.parseInt(lineInfo[3]),
           Double.parseDouble(lineInfo[4])
       );
       }
     return trecTopics;
     }
 
+  /**
+   * It's pretty inefficient.
+   * @param filePath is the fully qualified path to the trec results file.
+   * @return a trecResult object, containing all pertinent data for usage.
+   * @throws IOException In case the correct file is not found.
+   */
+  public static trecResult openTrecResultsFile(String filePath) throws IOException {
+    String trecResults = readFileUTF8(filePath, true);
+    trecResults = trecResults.replace("\n", " ");
+    trecResults = trecResults.replaceAll("\t+", " ");
+    trecResults = trecResults.replaceAll(" +", " ");
+    String[] trecResultsFile = trecResults.split(" ");
+    trecResult tr = new trecResult(trecResultsFile[2],
+        Integer.parseInt(trecResultsFile[5]),
+        Integer.parseInt(trecResultsFile[8]),
+        Integer.parseInt(trecResultsFile[11]),
+        Integer.parseInt(trecResultsFile[14]),
+        Double.parseDouble(trecResultsFile[17]),
+        Double.parseDouble(trecResultsFile[20]),
+        Double.parseDouble(trecResultsFile[23]),
+        Double.parseDouble(trecResultsFile[26]),
+        Double.parseDouble(trecResultsFile[29]),
+        Double.parseDouble(trecResultsFile[32]),
+        Double.parseDouble(trecResultsFile[35]),
+        Double.parseDouble(trecResultsFile[38]),
+        Double.parseDouble(trecResultsFile[41]),
+        Double.parseDouble(trecResultsFile[44]),
+        Double.parseDouble(trecResultsFile[47]),
+        Double.parseDouble(trecResultsFile[50]),
+        Double.parseDouble(trecResultsFile[53]),
+        Double.parseDouble(trecResultsFile[56]),
+        Double.parseDouble(trecResultsFile[59]),
+        Double.parseDouble(trecResultsFile[62]),
+        Double.parseDouble(trecResultsFile[65]),
+        Double.parseDouble(trecResultsFile[68]),
+        Double.parseDouble(trecResultsFile[71]),
+        Double.parseDouble(trecResultsFile[74]),
+        Double.parseDouble(trecResultsFile[77]),
+        Double.parseDouble(trecResultsFile[80]),
+        Double.parseDouble(trecResultsFile[83]),
+        Double.parseDouble(trecResultsFile[86]),
+        Double.parseDouble(trecResultsFile[89]),
+        true
+    );
+    return tr;
+  }
+
+  public static void writeTrecResult(trecTopic[] results) {
+    StringBuilder output = new StringBuilder();
+
+  }
   public static void main(String[] args) throws IOException {
     // simple test of the output of each of the file readers.
     String fileDir = "/home/luis-zugasti/IdeaProjects/tagme-luis/result_TF_IDF.txt";
     String ASCII = readFileASCII(fileDir);
     String UTF8 = readFileUTF8(fileDir, true);
-    trecTopic[] test = openTrecEvalFile(fileDir);
+    trecTopic[] opentest = openTrecEvalFile(fileDir);
 
+    String trecResultFileDir = "/home/luis-zugasti/IdeaProjects/tagme-luis/Luis_trec_results.txt";
+    trecResult tr = openTrecResultsFile(trecResultFileDir);
+    System.out.println(tr.toString());
     System.out.println("Testing completed.");
   }
 }

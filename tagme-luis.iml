@@ -18,5 +18,37 @@
     <orderEntry type="library" name="jsoup-1.13.1" level="project" />
     <orderEntry type="library" name="collections-generic-4.01" level="project" />
     <orderEntry type="library" name="javatuples-1.2" level="project" />
+    <orderEntry type="module-library" scope="TEST">
+      <library name="JUnit5.4">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/ext_lib/junit-jupiter-5.4.2.jar!/" />
+          <root url="jar://$MODULE_DIR$/ext_lib/junit-jupiter-api-5.4.2.jar!/" />
+          <root url="jar://$MODULE_DIR$/ext_lib/apiguardian-api-1.0.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/ext_lib/opentest4j-1.1.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/ext_lib/junit-platform-commons-1.4.2.jar!/" />
+          <root url="jar://$MODULE_DIR$/ext_lib/junit-jupiter-params-5.4.2.jar!/" />
+          <root url="jar://$MODULE_DIR$/ext_lib/junit-jupiter-engine-5.4.2.jar!/" />
+          <root url="jar://$MODULE_DIR$/ext_lib/junit-platform-engine-1.4.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/ext_lib/junit-jupiter-5.4.2.jar!/" />
+          <root url="jar://$MODULE_DIR$/ext_lib/junit-jupiter-api-5.4.2.jar!/" />
+          <root url="jar://$MODULE_DIR$/ext_lib/apiguardian-api-1.0.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/ext_lib/opentest4j-1.1.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/ext_lib/junit-platform-commons-1.4.2.jar!/" />
+          <root url="jar://$MODULE_DIR$/ext_lib/junit-jupiter-params-5.4.2.jar!/" />
+          <root url="jar://$MODULE_DIR$/ext_lib/junit-jupiter-engine-5.4.2.jar!/" />
+          <root url="jar://$MODULE_DIR$/ext_lib/junit-platform-engine-1.4.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

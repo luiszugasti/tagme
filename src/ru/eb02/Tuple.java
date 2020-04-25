@@ -3,6 +3,7 @@ package ru.eb02;
 /**
  * Simple implementation of a tuple - does not even go as far as a tuple.
  * No immutability. Just keeping two data types linked.
+ * Links a String type and a Double type together.
  */
 public class Tuple {
   private final String stringKey;

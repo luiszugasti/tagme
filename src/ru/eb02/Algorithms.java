@@ -1,5 +1,10 @@
 package ru.eb02;
 
+import java.util.ArrayList;
+
+/**
+ * Generic class for static implementations of algorithms.
+ */
 public class Algorithms {
 
   /**
@@ -21,19 +26,21 @@ public class Algorithms {
    *
    */
   public static void gridSearchTrec (double[] lambdaSteps, double[] centralitySteps, int kill,
-      trecTopic[] topics, DocGraph[] docGraphs, trecResult baseTrecResult) {
+      trecTopic[] trecTopics, DocGraph[] docGraphs, trecResult baseTrecResult) {
 
     class LinkedParameters {
       double lambda1;
       double lambda2;
       double centralityCutoff;
       double trecResult;
-      // TODO: Use the valid flag to indicate that this result had no illegal values for centrality cutoff.
-      boolean valid;
+      int kill;
 
-      public LinkedParameters (double lambda1, double lambda2, double centralityCutoff) {
+      public LinkedParameters (double lambda1, double centralityCutoff, int kill) {
+        if (kill > 0) this.kill = kill;
+
+        // Ensure lambdas are already normalized
         this.lambda1 = lambda1;
-        this.lambda2 = lambda2;
+        this.lambda2 = 1 - lambda1;
         this.centralityCutoff = centralityCutoff;
       }
 
@@ -42,6 +49,14 @@ public class Algorithms {
       }
 
     }
+
+    // Create array of LinkedParameters
+    ArrayList<LinkedParameters> allPossibleCombinations = new ArrayList<>();
+    for (double lambda : lambdaSteps) {
+      for (double centrality : centralitySteps)
+        allPossibleCombinations.add(new LinkedParameters(lambda, centrality, kill));
+    }
+
 
 
   }

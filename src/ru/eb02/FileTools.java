@@ -1,22 +1,19 @@
 package ru.eb02;
 
-/**
- * The file tools class is a collection of simple, static helper methods that allow interfacing
- * with the current file system. Some methods are more specialized than others.
- *
- * A general usage of FileTools:
- * 1. Create your run folder with @createFilePath.
- * 2. Read the contents of the original TREC search results file into a trecTopic object using
- *    @openTrecSearchResultsFile.
- * 3. Read the contents of your baseline scores with @openTrecScoresFile and save it into a
- *    trecResult object.
- * 4. Perform your tests; anytime you need to run a TREC test, simply use one of the helper
- *    writer/reader methods. Also make sure to call trecEvaler which will return to you your
- *    results!
- *    TODO: Write the trecEvaler method.
- *    TODO: Do a brief test of the methods here. As our interface with TREC, they are highly
- *          important!
- */
+/*
+ The file tools class is a collection of simple, static helper methods that allow interfacing
+ with the current file system. Some methods are more specialized than others.
+
+ A general usage of FileTools:
+ 1. Create your run folder with @createFilePath.
+ 2. Read the contents of the original TREC search results file into a trecTopic object using
+    @openTrecSearchResultsFile.
+ 3. Read the contents of your baseline scores with @openTrecScoresFile and save it into a
+    trecResult object.
+ 4. Perform your tests; anytime you need to run a TREC test, simply use one of the helper
+    writer/reader methods. Also make sure to call trecEvaler which will return to you your
+    results!
+*/
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -33,7 +30,37 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileTools {
-  public static final String GLOBALRESULTSPATH = "~/TagMe Engine Search results/";
+  public static final String GLOBALRESULTSPATH = "TagMe Engine Search results/";
+
+  /**
+   * Runs TREC eval and then returns its output.
+   * @param goldenQrels path to Qrels (Correct answers)
+   * @param resultEvalFile path to desired scores file to run against
+   * @return String
+   */
+  public static ArrayList<String> trecEvaler(String goldenQrels, String resultEvalFile) {
+    //Build command array
+    String[] cmdArray = {"Tests/./trec_eval", goldenQrels, resultEvalFile};
+    ArrayList<String> output = new ArrayList<>();
+
+    // Run this command in the terminal
+    try {
+      Process p = Runtime.getRuntime().exec(cmdArray);
+      InputStream stdOut = p.getInputStream();
+      p.getErrorStream(); // I don't use it at all but may as well consume it
+      InputStreamReader isr = new InputStreamReader(stdOut);
+      BufferedReader br = new BufferedReader(isr);
+      String line;
+      while ( (line = br.readLine()) != null)
+        output.add(line);
+      int exitVal = p.waitFor();
+      System.out.println("Process exitValue: " + exitVal);
+    } catch (Throwable t)
+    {
+      t.printStackTrace();
+    }
+    return output;
+  }
   /**
    * Opens a file in ASCII encoding.
    * @param filePath The filepath specified absolutely.
@@ -228,7 +255,7 @@ public class FileTools {
    * @param runName The name of this run of tests.
    * @throws IllegalArgumentException in the case the path already exists.
    */
-  private static void createFilePath (String runName) {
+  public static void createFilePath (String runName) {
     if (!(new File(GLOBALRESULTSPATH + runName).mkdirs())) throw new
         IllegalArgumentException("path for: " + runName + " already exists and may contain"
         + "files.");

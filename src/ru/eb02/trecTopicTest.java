@@ -52,13 +52,16 @@ class trecTopicTest {
     updater.put("clueweb09-88-42", 0.5);
     updater.put("clueweb09-88-22", 0.5);
 
+    final HashMap<String, Double> updaterTest = updater;
+
     // Quick check to see if this works.
     assertThrows(IllegalArgumentException.class, () -> {
-      tr.updateRanks(updater, 0, 1);
+      tr.updateRanks(updaterTest, 0);
         });
 
+    // TODO: Update this test
     updater.put("clueweb09-88-02", 0.5);
-    tr.updateRanks(updater, 0.5, 0.5);
+    tr.updateRanks(updaterTest, 0.5);
 
     // when they've all been set to 0.5, all should keep their rank.
     assertEquals(6, tr.getRank("clueweb09-18-92"));
@@ -68,7 +71,7 @@ class trecTopicTest {
 
     updater = null;
     assertThrows(NullArgumentException.class, () -> {
-      tr.updateRanks(updater, 0.223, 0.777);
+      tr.updateRanks(updaterTest, 0.223);
     });
 
 

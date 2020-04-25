@@ -150,7 +150,8 @@ public class Main {
         String tmpFilePath = documentDir + "/" + file.getName();
 
         // docs will have their file names and stopword stripped text, added here.
-        Doc temp = new Doc(FileTools.readFileUTF8(tmpFilePath, false), file.getName());
+        Doc temp = new Doc(FileTools.readFileUTF8(tmpFilePath, false), file.getName(),
+            wikiLanguage, rel, disamb, segmentation, rho, parser);
 
         // docs will then have their entities added here.
         temp.obtainEntities(wikiLanguage, rel, disamb, segmentation, rho, parser);
@@ -169,8 +170,8 @@ public class Main {
           // which will raise an exception. Skip.
           break;
         }
-        finalGraph.addTuple(documentA.getTopMap(), documentB.getTopMap(), documentA.getDocName(),
-            documentB.getDocName(), rel);
+//        finalGraph.addTuple(documentA.getTopMap(), documentB.getTopMap(), documentA.getDocName(),
+//            documentB.getDocName(), rel);
       }
     }
   }

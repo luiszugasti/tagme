@@ -16,3 +16,7 @@ hs_err_pid*
 /bin
 !/lib/snowball.jar
 
+# libs
+ext_lib/
+out/
+preproc_lib/

@@ -28,24 +28,36 @@ public class Algorithms {
   public static void gridSearchTrec (double[] lambdaSteps, double[] centralitySteps, int kill,
       trecTopic[] trecTopics, DocGraph[] docGraphs, trecResult baseTrecResult) {
 
+    /**
+     * LinkedParameters inner class: a single collection of linked parameters.
+     * Once instantiated, a single shot test can be run.
+     */
     class LinkedParameters {
-      double lambda1;
-      double lambda2;
-      double centralityCutoff;
+      final double lambda1;
+      final double lambda2;
+      final double centralityCutoff;
       double trecResult;
-      int kill;
+      final int kill;
 
       public LinkedParameters (double lambda1, double centralityCutoff, int kill) {
-        if (kill > 0) this.kill = kill;
+        if (lambda1 < 0 || lambda1 > 1 || centralityCutoff < 0 || centralityCutoff > 1) {
+          throw new IllegalArgumentException("Values provided for lambda1 or centralityCutoff"
+              + " are illegal.\n"
+              + "centralityCutoff: " + centralityCutoff
+              + "lambda1: " + lambda1);
+        }
 
-        // Ensure lambdas are already normalized
+        this.kill = kill;
         this.lambda1 = lambda1;
         this.lambda2 = 1 - lambda1;
         this.centralityCutoff = centralityCutoff;
       }
 
-      public void runTest () {
-
+      public String runSingleCentrality (trecTopic tt, DocGraph dc, trecResult tr) {
+        // take provided graph and run centrality (graph from the array of graphs)
+        // take results from centrality and apply them to single trecTopic
+        // Return the ordered toString representation from trecTopic.
+        return "Stub";
       }
 
     }

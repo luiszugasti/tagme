@@ -97,7 +97,6 @@ package ru.eb02;
  * of documents. These will be removed before running grid search.
  *
  * that is all I can think of. Future luis: keep strong, and keep testing code for a successful run!
- * TODO: helper methods of creating lambdaSteps[] and centralitySteps[]
  *
  * ==================================================
  *
@@ -131,8 +130,6 @@ public class Main {
     Disambiguator disamb = new Disambiguator(wikiLanguage);
     Segmentation segmentation = new Segmentation();
     RhoMeasure rho = new RhoMeasure();
-
-    // TODO track of any failed docs? They will have null entities.
 
     // TODO: hardcoded directory!
     String documentDir = "/home/luis-zugasti/EB02 Document Corpus/clueweb09PoolFilesTest";

@@ -2,8 +2,14 @@ package ru.eb02;
 
 import java.util.Objects;
 /**
- * A simple edge implementation. Created because JUNG does not readily work
- * with simple types.
+ * A simple edge implementation.
+ *
+ * Instance variables include the weight of this edge represented as a double. The vertices that
+ * this edge connects are called vertex1, vertex2 and are Strings.
+ * Edges cannot be modified once they are instantiated.
+ * Any two edges are considered equal if they have the same endpoints. This check is achieved
+ * by storing vertex1, 2 in alphabetical order.
+ * A loop (where two endpoints are the same) is not allowed.
  */
 public class SimpleEdge {
 
@@ -12,6 +18,7 @@ public class SimpleEdge {
   private final String vertex2;
 
   public SimpleEdge(String i, String j, double weight) {
+    // Loops are not allowed
     if (i.equals(j)) throw new IllegalArgumentException("Vertices provided are one and the same.");
     // We always sort i, j according to lexical order. That way, when comparing via hashcode,
     // we get consistent results.
@@ -41,8 +48,7 @@ public class SimpleEdge {
 
   @Override
   public int hashCode() {
-
-    return Objects.hash(vertex1, vertex2); // ID is all I care about.
+    return Objects.hash(vertex1, vertex2);
   }
 
   @Override

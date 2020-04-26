@@ -124,6 +124,7 @@ public class FileTools {
   /**
    * A specialised method that opens a TREC formatted search results file, and fills the relevant
    * information into (at most) 200 TREC topics.
+   * This method
    * @param filePath The filepath specified absolutely.
    * @return A trecTopic array consisting of all the TREC topics, their documents, scores, and
    *         rankings inherent in the trec data structure.
@@ -131,7 +132,6 @@ public class FileTools {
    */
   public static trecTopic[] openTrecSearchResultsFile(String filePath) throws IOException {
     String trecResults = readFileUTF8(filePath, true);
-    // TODO: Regex
     String[] lines = trecResults.split("\n");
     // 200 topics.. hardcoded.
     trecTopic[] trecTopics = new trecTopic[200];
@@ -148,7 +148,7 @@ public class FileTools {
           lineInfo[2],
           Double.parseDouble(lineInfo[4])
       );
-      }
+    }
     return trecTopics;
     }
 
@@ -326,6 +326,25 @@ public class FileTools {
         + ".txt";
   }
 
+  /**
+   * Reads and returns a Double[] array from a gridSearchParams file.
+   * File format can be found in the sample testRunCentralityValues.txt file in the directory.
+   * Desirable naming format:
+   * -  testRunCentralityValues.txt - values for centrality cutoff.
+   *    testRunLambdaValues.txt - values for lambda values.
+   * @param filePath path to selected gridSearchParams file.
+   * @return A Double[] array of gridSearchParams.
+   * @throws IOException in case the file is not found.
+   */
+  private static Double[] readSelectedGridSearchParameters(String filePath) throws IOException {
+    String[] lines = (readFileUTF8(filePath, true)).split("\n");
+    List<Double> gridSearchParams = new ArrayList<>();
+
+    for (String line : lines)
+      gridSearchParams.add(Double.parseDouble(line));
+
+    return gridSearchParams.toArray(new Double[gridSearchParams.size()]);
+  }
   public static void main(String[] args) throws IOException {
     // Simple and manual test of the output of each of the file readers.
     String fileDir = "/home/luis-zugasti/IdeaProjects/tagme-luis/result_TF_IDF.txt";

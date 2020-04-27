@@ -136,7 +136,7 @@ public class FileTools {
    *         rankings inherent in the trec data structure.
    * @throws IOException In case the file specified is not found.
    */
-  public static trecTopic[] openTrecSearchResultsFile(String contents) throws IOException {
+  public static trecTopic[] openTrecSearchResultsFile(String contents) {
     String[] lines = contents.split("\n");
     // 200 topics.. hardcoded.
     trecTopic[] trecTopics = new trecTopic[200];
@@ -213,20 +213,15 @@ public class FileTools {
    * to the name of the file. As far as I know, this process is essential in order for comparing a
    * TREC run with TREC eval executable.
    * TODO: Specify a hashing algorithm to make matching values easier? But will that be necessary?
-   * @param results The results of the sorted trecTopics, as an array of trecTopic objects.
    * @param runName The name of this run of tests.
    * @param lambda1 The value of lambda1. (High coupling with my generic algorithms!)
    * @param lambda2 The value of lambda2.
    * @param centCutoff The value for the centrality cutoff.
    */
-  public static void writeTrecSearchResultsFile(String filePath, String results,
+  public static void writeTrecSearchResultsFile(String results,
       String runName, String lambda1, String lambda2, String centCutoff) {
     ArrayList<String> output = new ArrayList<>();
-
-    // Call toString method to get properly formatted output.
-    for (String result : results) {
-      output.add(result.toString());
-    }
+    output.add(results); //FIXME: will this break?
 
     // Send payload to this run's folder.
     writeFile(output, fileNameSchema(GLOBALRESULTSPATH + runName, lambda1,
@@ -342,29 +337,32 @@ public class FileTools {
    * Desirable naming format:
    * -  testRunCentralityValues.txt - values for centrality cutoff.
    *    testRunLambdaValues.txt - values for lambda values.
-   * @param filePath path to selected gridSearchParams file.
+   * @param contents String of contents to read from.
    * @return A Double[] array of gridSearchParams.
-   * @throws IOException in case the file is not found.
    */
-  public static Double[] readSelectedGridSearchParameters(String contents) throws IOException {
+  public static double[] readSelectedGridSearchParameters(String contents){
     String[] lines = contents.split("\n");
     List<Double> gridSearchParams = new ArrayList<>();
 
     for (String line : lines)
       gridSearchParams.add(Double.parseDouble(line));
 
-    return gridSearchParams.toArray(new Double[gridSearchParams.size()]);
+    double[] target = new double[gridSearchParams.size()];
+    for (int i = 0; i < target.length; i++) {
+      target[i] = gridSearchParams.get(i);
+    }
+    return target;
   }
   public static void main(String[] args) throws IOException {
     // Simple and manual test of the output of each of the file readers.
-    String fileDir = "/home/luis-zugasti/IdeaProjects/tagme-luis/result_TF_IDF.txt";
-    String ASCII = readFileASCII(fileDir);
-    String UTF8 = readFileUTF8(fileDir, true);
-    trecTopic[] opentest = openTrecSearchResultsFile(fileDir);
-
-    String trecResultFileDir = "/home/luis-zugasti/IdeaProjects/tagme-luis/Luis_trec_results.txt";
-    trecResult tr = openTrecScoresFile(trecResultFileDir);
-    System.out.println(tr.toString());
-    System.out.println("Testing completed.");
+//    String fileDir = "/home/luis-zugasti/IdeaProjects/tagme-luis/result_TF_IDF.txt";
+//    String ASCII = readFileASCII(fileDir);
+//    String UTF8 = readFileUTF8(fileDir, true);
+//    trecTopic[] opentest = openTrecSearchResultsFile(fileDir);
+//
+//    String trecResultFileDir = "/home/luis-zugasti/IdeaProjects/tagme-luis/Luis_trec_results.txt";
+//    trecResult tr = openTrecScoresFile(trecResultFileDir);
+//    System.out.println(tr.toString());
+//    System.out.println("Testing completed.");
   }
 }

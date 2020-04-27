@@ -109,6 +109,7 @@ public class DocGraph {
   /**
    * Checks whether an edge specified between docA, docB already exists.
    * If it does, then the method will return True. False otherwise.
+   * Not sure if this is the fastest way...
    * @param docA is the first document for testing in the JUNG graph
    * @param docB is the second document for testing in the JUNG graph
    * @return True/false if the edge exists

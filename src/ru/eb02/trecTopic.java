@@ -9,7 +9,7 @@ import org.apache.commons.lang.NullArgumentException;
 /**
  *
  * The trecTopic class is a record of a single trecTopic as provided by the search results file.
- * It holds <strong>all</strong> entries for a document - and may get quite large.
+ * It holds <strong>all</strong> entries for a query - and may get quite large.
  * We truly only care about reorganizing the top 200 docs.
  *
  */

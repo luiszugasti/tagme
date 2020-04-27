@@ -1,6 +1,7 @@
 package ru.eb02;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Generic class for static implementations of algorithms.
@@ -33,13 +34,14 @@ public class Algorithms {
      * Once instantiated, a single shot test can be run.
      */
     class LinkedParameters {
+
       final double lambda1;
-      final double lambda2;
       final double centralityCutoff;
       double trecResult;
       final int kill;
 
-      public LinkedParameters (double lambda1, double centralityCutoff, int kill) {
+      public LinkedParameters(double lambda1, double centralityCutoff, int kill)
+          throws IllegalArgumentException {
         if (lambda1 < 0 || lambda1 > 1 || centralityCutoff < 0 || centralityCutoff > 1) {
           throw new IllegalArgumentException("Values provided for lambda1 or centralityCutoff"
               + " are illegal.\n"
@@ -49,15 +51,7 @@ public class Algorithms {
 
         this.kill = kill;
         this.lambda1 = lambda1;
-        this.lambda2 = 1 - lambda1;
         this.centralityCutoff = centralityCutoff;
-      }
-
-      public String runSingleCentrality (trecTopic tt, DocGraph dc, trecResult tr) {
-        // take provided graph and run centrality (graph from the array of graphs)
-        // take results from centrality and apply them to single trecTopic
-        // Return the ordered toString representation from trecTopic.
-        return "Stub";
       }
 
     }
@@ -68,17 +62,33 @@ public class Algorithms {
       for (double centrality : centralitySteps)
         allPossibleCombinations.add(new LinkedParameters(lambda, centrality, kill));
     }
-
-
-
   }
 
   /**
-   * A single trecTest, called with values of lambda1, lambda2, and centrality cutoff.
-   * It also accepts a
+   * Performs centrality for the provided graph, applies these results to the provided topic,
+   * runs these results against TREC Eval, saves all related files, and returns the desired score.
+   * @param tt The trec topic for this test.
+   * @param dc The document graph to perform centrality on.
+   * @param centCutoff Centrality cutoff value, between 0 and 1.
+   * @param lambda1 Value for weighing trec scores vs centrality scores.
+   * @return A desired value from TREC eval.
    */
-  public static double trecTest (double lambda1, double lambda2, double centralityCutoff) {
-    // STUB
-    return 7.00;
+  public static String runSubTest (trecTopic tt, DocGraph dc,
+      double centCutoff, double lambda1, String goldenQrels) {
+    // take provided graph (graph from the array of graphs) and run centrality
+    HashMap<String, Double> centrality = dc.computeCentrality(centCutoff);
+    // take results from centrality and apply them to single trecTopic
+    ArrayList<Tuple> result = tt.updateRanks(centrality, lambda1);
+    /* Run TREC Eval against these new results. */
+    // A: Convert results to string.
+    String results = tt.toString(result);
+    // B: Save results to file.
+    trecResult resultDeserialized = FileTools.openTrecScoresFile(results);
+    FileTools.writeTrecScoresFile();
+
+
+
+
+    return "Stub";
   }
 }

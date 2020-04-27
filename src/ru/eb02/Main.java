@@ -1,5 +1,16 @@
 package ru.eb02;
 
+import it.acubelab.tagme.Disambiguator;
+import it.acubelab.tagme.RelatednessMeasure;
+import it.acubelab.tagme.RhoMeasure;
+import it.acubelab.tagme.Segmentation;
+import it.acubelab.tagme.TagmeParser;
+import it.acubelab.tagme.config.TagmeConfig;
+import it.acubelab.tagme.preprocessing.TopicSearcher;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+
 /**
  * This sample Main Run completes the full testing process for improving the provided
  * search results, by building a document graph.
@@ -7,7 +18,7 @@ package ru.eb02;
  *
  * =========================OPENING OF RELEVANT DATA=========================
  *
- * 1. First, the Tagme Config service is initated. What this does is take the defined configuration
+ * 1. First, the Tagme Config service is initiated. What this does is take the defined configuration
  * xml file and applies the configuration settings to a TAGME instance. In our specific case, we
  * have configured our environment for high Java heap space, and run the TAGME service in FAST mode.
  * This Tagme initiation is completed by TagmeConfig.init() and the generation of Relatedness
@@ -102,20 +113,6 @@ package ru.eb02;
  *
  *
  *
- */
-import it.acubelab.tagme.Disambiguator;
-import it.acubelab.tagme.RelatednessMeasure;
-import it.acubelab.tagme.RhoMeasure;
-import it.acubelab.tagme.Segmentation;
-import it.acubelab.tagme.TagmeParser;
-import it.acubelab.tagme.config.TagmeConfig;
-import it.acubelab.tagme.preprocessing.TopicSearcher;
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-
-/**
- * (Currently) a sequentially based, entity finder for documents.
  */
 public class Main {
 

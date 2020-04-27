@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileTools {
-  public static final String GLOBALRESULTSPATH = "TagMe Engine Search results/";
+  public static final String GLOBALRESULTSPATH = "TagMe_Engine_Search_results/";
 
   /**
    * Runs TREC eval and then returns its output.
@@ -104,11 +104,14 @@ public class FileTools {
     BufferedReader br = new BufferedReader(new InputStreamReader(input, UTF8));
     StringBuilder fileText = new StringBuilder();
     String line;
+//    int i = 0;
     try {
       if (newLine) {
         while ((line = br.readLine()) != null) {
           fileText.append(line);
           fileText.append("\n");
+//          System.out.println("lines read: " + i);
+//          i++;
         }
       } else {
         while ((line = br.readLine()) != null) {
@@ -117,30 +120,34 @@ public class FileTools {
       }
     } finally {
       br.close();
+      input.close();
     }
+//    System.out.println("line end");
     return fileText.toString();
   }
 
   /**
    * A specialised method that opens a TREC formatted search results file, and fills the relevant
    * information into (at most) 200 TREC topics.
-   * This method
-   * @param filePath The filepath specified absolutely.
+   * This method requires being called with the result of readFileUTF8 in newline mode
+   * (newline=true).
+   * @param contents String contents to deserialize.
    * @return A trecTopic array consisting of all the TREC topics, their documents, scores, and
    *         rankings inherent in the trec data structure.
    * @throws IOException In case the file specified is not found.
    */
-  public static trecTopic[] openTrecSearchResultsFile(String filePath) throws IOException {
-    String trecResults = readFileUTF8(filePath, true);
-    String[] lines = trecResults.split("\n");
+  public static trecTopic[] openTrecSearchResultsFile(String contents) throws IOException {
+    String[] lines = contents.split("\n");
     // 200 topics.. hardcoded.
     trecTopic[] trecTopics = new trecTopic[200];
     for (int i = 0; i < 200; i++) {
       trecTopics[i] =
           new trecTopic(i+1);
+//      System.out.println("Topic Number " + i + " opened completely.");
     }
 
     String[] lineInfo;
+//    int i = 0;
 
     for (String line : lines) {
       lineInfo = line.split("\\s+");
@@ -148,6 +155,8 @@ public class FileTools {
           lineInfo[2],
           Double.parseDouble(lineInfo[4])
       );
+//      i++;
+//      System.out.println("Documents added: " + i + ".");
     }
     return trecTopics;
     }
@@ -195,6 +204,7 @@ public class FileTools {
         Double.parseDouble(scores[89]),
         true
     );
+//    System.out.println("Opened TREC Scores file completely.");
     return tr;
   }
 
@@ -209,12 +219,12 @@ public class FileTools {
    * @param lambda2 The value of lambda2.
    * @param centCutoff The value for the centrality cutoff.
    */
-  public static void writeTrecSearchResultsFile(String filePath, trecTopic[] results,
+  public static void writeTrecSearchResultsFile(String filePath, String results,
       String runName, String lambda1, String lambda2, String centCutoff) {
     ArrayList<String> output = new ArrayList<>();
 
     // Call toString method to get properly formatted output.
-    for (trecTopic result : results) {
+    for (String result : results) {
       output.add(result.toString());
     }
 
@@ -336,8 +346,8 @@ public class FileTools {
    * @return A Double[] array of gridSearchParams.
    * @throws IOException in case the file is not found.
    */
-  private static Double[] readSelectedGridSearchParameters(String filePath) throws IOException {
-    String[] lines = (readFileUTF8(filePath, true)).split("\n");
+  public static Double[] readSelectedGridSearchParameters(String contents) throws IOException {
+    String[] lines = contents.split("\n");
     List<Double> gridSearchParams = new ArrayList<>();
 
     for (String line : lines)

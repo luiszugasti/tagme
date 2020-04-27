@@ -1,5 +1,8 @@
 package ru.eb02;
 
+/**
+ * trecResult holds ALL the values obtained from running a search hits file against TRECEval.
+ */
 public class trecResult {
   private final String runid;
   private final int num_q;

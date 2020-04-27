@@ -34,6 +34,15 @@ public class Doc {
   }
 
   /**
+   * For testing
+   */
+  public Doc(String docText, String docName) {
+    Document document = Jsoup.parse(docText, "ASCII");
+    this.docName = docName;
+    strippedDocText = removeStopWords(document.text());
+  }
+
+  /**
    * Get Top Entities, as hardcoded
    * @return this.topMap
    */

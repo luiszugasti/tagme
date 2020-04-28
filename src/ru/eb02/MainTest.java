@@ -91,16 +91,6 @@ class MainTest {
 
     final long startTime = System.currentTimeMillis();
 
-    // Initiate TAGME modules.
-    TagmeConfig.init();
-    String wikiLanguage = "en";
-    RelatednessMeasure rel = RelatednessMeasure.create(wikiLanguage);
-    TopicSearcher searcher = new TopicSearcher(wikiLanguage);
-    TagmeParser parser = new TagmeParser(wikiLanguage, true);
-    Disambiguator disamb = new Disambiguator(wikiLanguage);
-    Segmentation segmentation = new Segmentation();
-    RhoMeasure rho = new RhoMeasure();
-
     //READ Files process
     trecResult baseTrecScore = FileTools.openTrecScoresFile(FileTools.readFileUTF8(
         baselineSearchResultsScorePath, true
@@ -123,6 +113,24 @@ class MainTest {
     //SAVE to desired process pipelines
     HashMap<String, Doc> mapDocs = new HashMap<>();
     int i = 0;
+
+    // Initiate TAGME modules.
+    TagmeConfig.init();
+    String wikiLanguage = "en";
+    RelatednessMeasure rel = RelatednessMeasure.create(wikiLanguage);
+    System.out.println("Relatedness measure started.");
+//    TopicSearcher searcher = new TopicSearcher(wikiLanguage);
+//    System.out.println("Topic seracher started.");
+    TagmeParser parser = new TagmeParser(wikiLanguage, true);
+    System.out.println("Parser started.");
+    Disambiguator disamb = new Disambiguator(wikiLanguage);
+    System.out.println("Disambugator started.");
+    Segmentation segmentation = new Segmentation();
+    System.out.println("Segmentation started.");
+    RhoMeasure rho = new RhoMeasure();
+    System.out.println("RhoMeasure started.");
+
+    System.out.println("Starting up the testing now.");
 
     // puts 40,000 docs into memory.
     for (trecTopic t : completeTrecTopics) {

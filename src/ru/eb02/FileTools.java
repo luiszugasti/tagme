@@ -134,7 +134,6 @@ public class FileTools {
    * @param contents String contents to deserialize.
    * @return A trecTopic array consisting of all the TREC topics, their documents, scores, and
    *         rankings inherent in the trec data structure.
-   * @throws IOException In case the file specified is not found.
    */
   public static trecTopic[] openTrecSearchResultsFile(String contents) {
     String[] lines = contents.split("\n");
@@ -212,20 +211,21 @@ public class FileTools {
    * Writes a TREC search result file to a specified location and appends relevant run information
    * to the name of the file. As far as I know, this process is essential in order for comparing a
    * TREC run with TREC eval executable.
-   * TODO: Specify a hashing algorithm to make matching values easier? But will that be necessary?
+   * TODO: RETURN THE LOCATION WHERE THE FILE WAS SAVED!
    * @param runName The name of this run of tests.
    * @param lambda1 The value of lambda1. (High coupling with my generic algorithms!)
    * @param lambda2 The value of lambda2.
    * @param centCutoff The value for the centrality cutoff.
    */
-  public static void writeTrecSearchResultsFile(String results,
+  public static String writeTrecSearchResultsFile(ArrayList<String> output,
       String runName, String lambda1, String lambda2, String centCutoff) {
-    ArrayList<String> output = new ArrayList<>();
-    output.add(results); //FIXME: will this break?
 
+    String dir = fileNameSchema(GLOBALRESULTSPATH + runName, lambda1,
+        lambda2, centCutoff);
     // Send payload to this run's folder.
-    writeFile(output, fileNameSchema(GLOBALRESULTSPATH + runName, lambda1,
-        lambda2, centCutoff), null);
+    writeFile(output, dir, null);
+
+    return dir;
   }
 
   /**
@@ -238,21 +238,18 @@ public class FileTools {
    * -  read TREC eval against this using the openUTF8 method, obtain the string as desired
    * and send it to this method. This method is actually just a file writer but keep it our little
    * secret??
-   * @param text text to write as a TrecScoresFile.
+   * @param output text to write as a TrecScoresFile.
    * @param runName The name of this run of tests.
    * @param lambda1 The value of lambda1.
    * @param lambda2 The value of lambda2.
    * @param centCutoff The value for the centrality cutoff.
-   * @param score This run's valuable score (can assume it's MAP).
    */
-  public static void writeTrecScoresFile(String text, String runName, String lambda1,
-      String lambda2, String centCutoff, Double score) {
-    ArrayList<String> output = new ArrayList<>();
-    output.add(text);
+  public static void writeTrecScoresFile(ArrayList<String> output, String runName, String lambda1,
+      String lambda2, String centCutoff) {
 
     // Send payload to newly created folder.
     writeFile(output, fileNameSchema(GLOBALRESULTSPATH + runName, lambda1,
-        lambda2, centCutoff, score), null);
+        lambda2, centCutoff), null);
   }
 
   /**
@@ -289,6 +286,7 @@ public class FileTools {
    * @param lambda1 The value of lambda1.
    * @param lambda2 The value of lambda2.
    * @param centCutoff The value for the centrality cutoff.
+   * @return filename of file to save.
    */
   private static String fileNameSchema(String runName, String lambda1, String lambda2,
       String centCutoff) {
@@ -353,7 +351,7 @@ public class FileTools {
     }
     return target;
   }
-  public static void main(String[] args) throws IOException {
+  public static void main(String[] args) {
     // Simple and manual test of the output of each of the file readers.
 //    String fileDir = "/home/luis-zugasti/IdeaProjects/tagme-luis/result_TF_IDF.txt";
 //    String ASCII = readFileASCII(fileDir);

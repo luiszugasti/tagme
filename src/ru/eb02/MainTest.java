@@ -151,19 +151,6 @@ class MainTest {
     for (int j = 0; j <200; j++) {
       allDocGraphs[i] = new DocGraph(0, i+1);
     }
-//    ArrayList<LinkedDocGraphTrecTopic> topicsAndDocs = new ArrayList<>();
-
-//    //Assign docgraphs to trectopics
-//    for (DocGraph docGraph : allDocGraphs) {
-//      topicsAndDocs.add(new LinkedDocGraphTrecTopic(docGraph, completeTrecTopics[docGraph.getQuery()-1]));
-//    }
-//
-//    for (LinkedDocGraphTrecTopic ldt : topicsAndDocs) {
-//      for (Tuple t1 : ldt.getTt().getDocRankingScores()) {
-//        for (Tuple t2 : ldt.getTt().getDocRankingScores()) {
-//
-//        }
-//    }
     //Fill all document graphs with docs (edges) and don't make them duplicate!
     // For each document graph,
     for (DocGraph docGraph : allDocGraphs) {
@@ -197,8 +184,9 @@ class MainTest {
         allDocGraphs,
         baseTrecScore,
         runName,
-        TRECEvalPath);
+        TRECEvalPath,
+        goldenQrelsPath);
 
-    System.out.println("Testing completed.");
+    System.out.println("Run completed!");
   }
 }

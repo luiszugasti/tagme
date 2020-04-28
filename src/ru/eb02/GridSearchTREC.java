@@ -30,6 +30,7 @@ public class GridSearchTREC {
   trecResult baseTrecResult;
   String runName;
   String TRECEvalPath;
+  String goldenQrels;
 
   /**
    * Constructor. Pass in all relevant file names and placements for running an experiment.
@@ -47,7 +48,8 @@ public class GridSearchTREC {
       DocGraph[] docGraphs,
       trecResult baseTrecResult,
       String runName,
-      String TRECEvalPath) {
+      String TRECEvalPath,
+      String goldenQrels) {
     this.centralitySteps = centralitySteps;
     this.lambdaSteps = lambdaSteps;
     this.kill = kill;
@@ -55,6 +57,7 @@ public class GridSearchTREC {
     this.docGraphs = docGraphs;
     this.runName = runName;
     this.TRECEvalPath = TRECEvalPath;
+    this.goldenQrels = goldenQrels;
   }
 
   /**
@@ -66,15 +69,13 @@ public class GridSearchTREC {
     ArrayList<LinkedParameters> allPossibleCombinations = new ArrayList<>();
     for (double lambda : lambdaSteps) {
       for (double centrality : centralitySteps) {
-        for (DocGraph d : docGraphs) {
-          allPossibleCombinations.add(new LinkedParameters(lambda, centrality, kill, d));
-        }
+        allPossibleCombinations.add(new LinkedParameters(lambda, centrality, kill, runName));
       }
     }
     // Now, we have all the potential choices for running each experiment. Go through each Linked
     // Parameter and run the test.
     for (LinkedParameters p : allPossibleCombinations) {
-      p.runSubTest();
+      p.runFullExperiment(docGraphs, trecTopics, goldenQrels);
     }
   }
 }

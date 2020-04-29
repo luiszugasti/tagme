@@ -2,6 +2,7 @@ package ru.eb02;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  * gridSearchTrec assumes a list of graphs entries has already been provided to it.
@@ -26,7 +27,7 @@ public class GridSearchTREC {
   double[] lambdaSteps;
   int kill;
   trecTopic[] trecTopics;
-  DocGraph[] docGraphs;
+  Set<DocGraph> docGraphs;
   trecResult baseTrecResult;
   String runName;
   String TRECEvalPath;
@@ -45,7 +46,7 @@ public class GridSearchTREC {
       double[] centralitySteps,
       int kill,
       trecTopic[] trecTopics,
-      DocGraph[] docGraphs,
+      Set<DocGraph> docGraphs,
       trecResult baseTrecResult,
       String runName,
       String TRECEvalPath,

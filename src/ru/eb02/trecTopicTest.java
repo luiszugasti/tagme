@@ -60,11 +60,6 @@ class trecTopicTest {
     // Quick check to see if this works.
     assertEquals(1.0,tester.get(0).getValue());
     assertEquals(0.55,tester.get(6).getValue());
-    // TODO: ALSO TEST HOW THE FILE INPUTS INTERACT WITH THIS CLASS.
-    //       THEN DO AN IMPLEMENTATION OF ALL CLASSES WITHOUT THE GRIDSEARCH ALGO.
-    //       FINALLY, IMPLEMENT GRID SEARCH IN THE SAME WAY AND THEN TEST + SEE HOW FAST IT IS
-    //       WITHOUT USING TAGME. DO RUNS WITH JUST SEEING HOW TREC INTERACTION GOES AND WHAT NOT.
-    //       FINALLY, SEE HOW TO BUILD THIS CODE AND RUN ON THE GOOGLE CLOUD INSTANCE!!!
   }
 
   @Test

@@ -1,23 +1,19 @@
 package ru.eb02;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import it.acubelab.tagme.Disambiguator;
 import it.acubelab.tagme.RelatednessMeasure;
 import it.acubelab.tagme.RhoMeasure;
 import it.acubelab.tagme.Segmentation;
 import it.acubelab.tagme.TagmeParser;
 import it.acubelab.tagme.config.TagmeConfig;
-import it.acubelab.tagme.preprocessing.TopicSearcher;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import org.junit.jupiter.api.Test;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 class MainTest {
 
-//  @Test
-//  public void main() throws IOException {
   public static void main(String[] args) throws IOException {
 
     // Usage string for command line interfaces
@@ -58,6 +54,7 @@ class MainTest {
     String baseForDocs =
         "../Docs/";
 
+    // fetch all the related document directories for running a test.
     for(int i = 0; i < args.length; i++) {
       if ("-baselineSearchResultsPath".equals(args[i])) {
         baselineSearchResultsPath = args[i+1];
@@ -89,15 +86,28 @@ class MainTest {
       }
     }
 
-    final long startTime = System.currentTimeMillis();
+    System.out.println("This MainTest file will get all document entities, and document graphs.");
+    System.out.println("It will then save them as .ser files so that they can be used in any\n" +
+        "required grid search tests.");
 
     //READ Files process
     trecResult baseTrecScore = FileTools.openTrecScoresFile(FileTools.readFileUTF8(
         baselineSearchResultsScorePath, true
     ));
+
+    // Open all the TrecTopics
     trecTopic[] completeTrecTopics = FileTools.openTrecSearchResultsFile(FileTools.readFileUTF8(
         baselineSearchResultsPath, true
     ));
+
+    // Create a set of unique doc names (this gets only the doc names...)
+    Set<String> allDocNames = new HashSet<>();
+    for (trecTopic t : completeTrecTopics) {
+      for (Tuple tup : t.getDocRankingScores())
+        allDocNames.add(tup.getKey());
+    }
+    System.out.println("Set of all unique doc names created!");
+
     double[] centralityValueArray = FileTools.readSelectedGridSearchParameters(
         FileTools.readFileUTF8(centralityValues, true)
     );
@@ -106,12 +116,6 @@ class MainTest {
     );
     FileTools.createFilePath(baseForRuns+runName);
 
-    final long readDataTime = System.currentTimeMillis();
-    System.out.println("Time to read data: " + (readDataTime - startTime));
-
-    final long readDocsTime = System.currentTimeMillis();
-    //SAVE to desired process pipelines
-    HashMap<String, Doc> mapDocs = new HashMap<>();
     int i = 0;
 
     // Initiate TAGME modules.
@@ -132,33 +136,55 @@ class MainTest {
 
     System.out.println("Starting up the testing now.");
 
-    // puts 40,000 docs into memory.
-    for (trecTopic t : completeTrecTopics) {
-      for (Tuple tup : t.getDocRankingScores()) {
-        if (mapDocs.containsKey(tup.getKey())) {
-          System.out.println("duplicate found");
-          continue;
-        }
-        String tmpFilePath = baseForDocs + tup.getKey();
-        mapDocs.put(tup.getKey(),
-            new Doc(FileTools.readFileUTF8(tmpFilePath, true),
-                tup.getKey(),
+    // Basically what I need here is to get all the unique doc names from all the relationships
+    // right?
+
+    //SAVE to desired process pipelines
+    Map<String, Doc> mapDocs = new ConcurrentHashMap<>();
+
+    //Basically what this would look like in Streams:
+    // create a set of doc_titles. DONE.
+    // create our concurrent Map. DONE.
+    // For each doc name, run the stream
+
+    String finalBaseForDocs = baseForDocs;
+    allDocNames.parallelStream().forEach((documentName) -> {
+      try {
+        mapDocs.put(documentName,
+            new Doc(FileTools.readFileUTF8(finalBaseForDocs + documentName, true),
+                documentName,
                 wikiLanguage,
                 rel,
                 disamb,
                 segmentation,
                 rho,
                 parser));
-        System.out.println("docs processed: " + i++);
+        // sanity
+        System.out.println("Docs in mapDocs: " + mapDocs.size());
+      } catch(IOException e) {
+        System.out.println("A document was not found.");
+        e.printStackTrace();
+        System.exit(1);
       }
-    }
-    System.out.println("Time to read, process 40000 docs: " + (readDocsTime - readDataTime));
+    });
 
-    //Create document graphs.
-    DocGraph[] allDocGraphs = new DocGraph[200];
-    for (int j = 0; j <200; j++) {
-      allDocGraphs[i] = new DocGraph(0, i+1);
+    System.out.println("All docs were opened");
+
+    // Now save the docs
+    for (String key : mapDocs.keySet()){
+      mapDocs.get(key).serializeDoc();
     }
+
+    //Create document graphs
+
+    Set<DocGraph> allDocGraphs = new HashSet<>();
+    for (int j = 0; j <200; j++) {
+      allDocGraphs.add(new DocGraph(0, i+1));
+    }
+
+    System.out.println("Generation of doc graphs is complete");
+    // LOL this will also be a bottleneck. but leave it for now.
+
     //Fill all document graphs with docs (edges) and don't make them duplicate!
     // For each document graph,
     for (DocGraph docGraph : allDocGraphs) {
@@ -179,6 +205,12 @@ class MainTest {
       }
     }
 
+    // Above may be slow, but warranted; we may get thru it
+    // save the graphs
+    for (DocGraph doc : allDocGraphs){
+      doc.serializeDocGraph();
+    }
+
     // provided: all 200 *docGraph[]* have been filled with relevant docs.
     // all completeTrecTopics are created with important and non-important docs.
     // all relevant files are opened.
@@ -194,6 +226,8 @@ class MainTest {
         runName,
         TRECEvalPath,
         goldenQrelsPath);
+
+    fullTest.experimentFactory();
 
     System.out.println("Run completed!");
   }

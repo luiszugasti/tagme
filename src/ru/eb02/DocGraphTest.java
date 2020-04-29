@@ -8,6 +8,7 @@ import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import edu.uci.ics.jung.graph.UndirectedSparseMultigraph;
 import edu.uci.ics.jung.graph.event.GraphEvent.Vertex;
 import edu.uci.ics.jung.graph.util.EdgeType;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Objects;
 import org.junit.jupiter.api.Test;
@@ -15,19 +16,18 @@ import org.junit.jupiter.api.Test;
 class DocGraphTest {
 
   @Test
-  void getQuery() {
+  void serialize() {
+    DocGraph testGraph = new DocGraph(0, 9);
+    testGraph.addEdge(0.3, "test2", "test1");
+    testGraph.serializeDocGraph();
   }
 
   @Test
-  void addVertex() {
-  }
-
-  @Test
-  void addEdge() {
-  }
-
-  @Test
-  void addTuple() {
+  void deserialize() throws IOException {
+    DocGraph testGraph = DocGraph.deSerializeDocGraph(9);
+    DocGraph testGraphCompare = new DocGraph(0, 9);
+    testGraphCompare.addEdge(0.3, "test2", "test1");
+    System.out.println("testing complete");
   }
 
   @Test

@@ -7,7 +7,7 @@ import java.util.Objects;
  * with simple types.
  */
 public class SimpleVertex {
-  private String id;
+  private final String id;
 
   public SimpleVertex(String id) {
     this.id = id;

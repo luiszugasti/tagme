@@ -7,6 +7,8 @@ import it.acubelab.tagme.RelatednessMeasure;
 import it.acubelab.tagme.RhoMeasure;
 import it.acubelab.tagme.Segmentation;
 import it.acubelab.tagme.TagmeParser;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -33,6 +35,15 @@ public class Doc {
     this.obtainEntities(lang, rel, disamb, segmentation, rho, parser);
   }
 
+  /**
+   * alternate constructor
+   */
+  public Doc(HashMap<Integer, Integer> integerIntegerHashMap, String docName) {
+    this.docName = docName;
+    this.entityMap = integerIntegerHashMap;
+    this.strippedDocText = "STUB - NOT USED";
+    this.saveTopHits(5);
+  }
   /**
    * For testing
    */
@@ -132,4 +143,27 @@ public class Doc {
     this.saveTopHits(5);
   }
 
+  public void serializeDoc() {
+    // Only care about the entityMap; nothing else
+    ArrayList<String> output = new ArrayList<>();
+    // get simple values
+    for (Integer i : entityMap.keySet()) {
+      output.add(i + " " + entityMap.get(i));
+    }
+    // print it
+    FileTools.writeFile(output, "docs/" + docName + ".ser", null);
+  }
+
+  public static Doc deSerializeDoc(String docName) throws IOException {
+    // instantiate a Doc with just hashmaps
+    String[] results = FileTools.readFileUTF8("docs/" + docName + ".ser",
+        true).split("\n");
+    HashMap<Integer, Integer> hii = new HashMap<>();
+    // go through each line to instantiate them
+    for (String r : results) {
+      String[] temp = r.split(" ");
+      hii.put(Integer.parseInt(temp[0]), Integer.parseInt(temp[1]));
+    }
+    return new Doc(hii, docName);
+  }
 }

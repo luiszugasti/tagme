@@ -269,7 +269,7 @@ public class FileTools {
    * @param filePath Path of the file to write.
    * @param charset Specified character set to write the file. Default UTF-8.
    */
-  private static void writeFile(List<String> contents, String filePath, Charset charset) {
+  public static void writeFile(List<String> contents, String filePath, Charset charset) {
     if (charset == null) charset = StandardCharsets.UTF_8;
 
     try {

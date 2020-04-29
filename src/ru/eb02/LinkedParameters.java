@@ -2,6 +2,9 @@ package ru.eb02;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Queue;
+import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * LinkedParameters class: a single collection of linked parameters.
@@ -29,26 +32,35 @@ public class LinkedParameters {
     this.runName = runName;
   }
 
-  public void runFullExperiment(DocGraph[] d, trecTopic[] t, String goldenQrels) {
-    ArrayList<String> fullResults = new ArrayList<>();
+  public void runFullExperiment(Set<DocGraph> d, trecTopic[] t, String goldenQrels) {
+    // This queue will hold all the toString representations of the results, for being printed out
+    Queue<String> fullResults = new ConcurrentLinkedQueue<>();
     int i = 0;
     String lambda1Send = Double.toString(lambda1);
     String lambda2Send = Double.toString(1 - lambda1);
     String centralitySend = Double.toString(centralityCutoff);
-    for (DocGraph singleD : d) {
-      // Initialize synchronized test. Assumes trecTopics are sorted increasing! Which they should!
-      fullResults.add(runSubTest(singleD, t[i]));
-      i++;
-    }
+
+    // Using a parallel stream, send the docgraph data and related trec topic data to the test.
+    // I have briefly tested TREC eval and know that it does not require the entries to be in order.
+    // so this will be fine.
+
+    d.parallelStream().forEach((docGraph -> {
+      fullResults.add(runSubTest(docGraph, t[docGraph.getQuery()-1]));
+    }));
+
+    // print all results into an "array list" for compatability
+    ArrayList<String> output = new ArrayList<>(fullResults);
 
     // Now we have all the results for 200 docs. Run TREC eval against them and save.
-    String pathToResults = FileTools.writeTrecSearchResultsFile(fullResults, runName,
+    String pathToResults = FileTools.writeTrecSearchResultsFile(output, runName,
         lambda1Send, lambda2Send, centralitySend);
+    System.out.println("The path that was sent! " + pathToResults);
 
-    // Run TREC results, this also writes the results directly!
-    FileTools.writeTrecScoresFile(FileTools.trecEvaler(goldenQrels, pathToResults), runName,
-        lambda1Send, lambda2Send, centralitySend);
+    // get the trec results and save them here.
+    ArrayList<String> results = FileTools.trecEvaler(goldenQrels, pathToResults);
 
+    //
+    FileTools.writeTrecScoresFile(results, runName, lambda1Send, lambda2Send, centralitySend);
   }
 
   /**

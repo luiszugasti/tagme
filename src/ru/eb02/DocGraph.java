@@ -6,6 +6,11 @@ import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import edu.uci.ics.jung.graph.util.EdgeType;
 import it.acubelab.tagme.RelatednessMeasure;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.Serializable;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
@@ -21,7 +26,7 @@ import java.util.Map;
  * Use this class to perform <strong>centrality measures</strong>.
  *
  */
-public class DocGraph {
+public class DocGraph implements Serializable {
   private Graph<SimpleVertex, SimpleEdge> graph;
   private final double threshold;
   private final int query;
@@ -206,5 +211,46 @@ public class DocGraph {
     }
     if(subGraph.getEdgeCount() == graph.getEdgeCount()) throw new IllegalStateException();
     return subGraph;
+  }
+
+  /*
+  Serialization of the document graph and deserialization to file.
+   */
+
+  public void serializeDocGraph() {
+    // this will write the DocGraph to file
+    // Saving of object in a file
+    ArrayList<String> output = new ArrayList<>();
+    // get simple values
+    output.add("Threshold: " + threshold);
+    output.add("Query: " + query);
+
+    // Invoke printing of edges
+    Collection<SimpleEdge> edges = graph.getEdges();
+    // edges now, first is the weight, then vertex1, then vertex2
+    for (SimpleEdge edge : edges)
+      output.add(edge.getWeight() + " " + edge.getVertex1() + " " + edge.getVertex2());
+
+    // print it
+    FileTools.writeFile(output, "docgraphs/" + query + "graph.ser", null);
+  }
+
+  public static DocGraph deSerializeDocGraph (int query) throws IOException {
+    String results = FileTools.readFileUTF8("docgraphs/" + query + "graph.ser",
+        true);
+
+    // parse thru it
+    String[] lines = results.split("\n");
+    // first line is the threshold
+    double threshold = Double.parseDouble(lines[0].split(" ")[1]);
+
+    DocGraph deSerialized = new DocGraph(threshold, query);
+
+    // parse thru the rest of the lines
+    for (int i = 2; i < lines.length; i++) {
+      String[] temp = lines[i].split(" ");
+      deSerialized.addEdge(Double.parseDouble(temp[0]), temp[1], temp[2]);
+    }
+    return deSerialized;
   }
 }

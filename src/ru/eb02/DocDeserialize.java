@@ -8,7 +8,9 @@ import it.acubelab.tagme.TagmeParser;
 import it.acubelab.tagme.config.TagmeConfig;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class DocDeserialize {
@@ -102,7 +104,7 @@ public class DocDeserialize {
     ));
 
     // Create a set of the documents THEMSELVES
-    Set<Doc> allDocs = new HashSet<>();
+    Map<String, Doc> allDocs = new HashMap<>();
 
     // TODO: hardcoded directory<<< MAKE SURE TO CHANGE TO RELATIVE ON HOST
     String documentDir = "docs/";
@@ -117,7 +119,7 @@ public class DocDeserialize {
         // docs then get deserialized!
         Doc temp = Doc.deSerializeDoc(file.getName());
 
-        allDocs.add(temp);
+        allDocs.put(file.getName(), temp);
       }
     }
 
@@ -170,8 +172,8 @@ public class DocDeserialize {
           // Why don't we check for duplicate edges?
           // i.e. edge1: v1 to v2, edged2: v2 to v1
           // JUNG quietly won't create these edges.
-          docGraph.addEdge(mapDocs.get(t1.getKey()).getTopMap(),
-              mapDocs.get(t2.getKey()).getTopMap(),
+          docGraph.addEdge(allDocs.get(t1.getKey()).getTopMap(),
+              allDocs.get(t2.getKey()).getTopMap(),
               t1.getKey(),
               t2.getKey(),
               rel);

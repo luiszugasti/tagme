@@ -6,16 +6,15 @@ import it.acubelab.tagme.RhoMeasure;
 import it.acubelab.tagme.Segmentation;
 import it.acubelab.tagme.TagmeParser;
 import it.acubelab.tagme.config.TagmeConfig;
+import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
-class MainTest {
+public class DocDeserialize {
 
   public static void main(String[] args) throws IOException {
-
+    // deserialize all docs found...
     // Usage string for command line interfaces
     String usage =
         "In order to use me, please ensure following parameters are filled.\n"
@@ -86,9 +85,11 @@ class MainTest {
       }
     }
 
-    System.out.println("This MainTest file will get all document entities, and document graphs.");
+    System.out.println("This DocDeserialize file will deserialize docs and build your document graphs.");
     System.out.println("It will then save them as .ser files so that they can be used in any\n" +
         "required grid search tests.");
+    System.out.println("enjoy");
+
 
     //READ Files process
     trecResult baseTrecScore = FileTools.openTrecScoresFile(FileTools.readFileUTF8(
@@ -100,13 +101,27 @@ class MainTest {
         baselineSearchResultsPath, true
     ));
 
-    // Create a set of unique doc names (this gets only the doc names...)
-    Set<String> allDocNames = new HashSet<>();
-    for (trecTopic t : completeTrecTopics) {
-      for (Tuple tup : t.getDocRankingScores())
-        allDocNames.add(tup.getKey());
+    // Create a set of the documents THEMSELVES
+    Set<Doc> allDocs = new HashSet<>();
+
+    // TODO: hardcoded directory<<< MAKE SURE TO CHANGE TO RELATIVE ON HOST
+    String documentDir = "docs/";
+
+    // Batch processing: Get all the entities.
+    File folder = new File(documentDir);
+    File[] docNameList = folder.listFiles();
+    for(File file : docNameList) {
+      if (file.isFile()) {
+        String tmpFilePath = documentDir + "/" + file.getName();
+
+        // docs then get deserialized!
+        Doc temp = Doc.deSerializeDoc(file.getName());
+
+        allDocs.add(temp);
+      }
     }
-    System.out.println("Set of all unique doc names created!");
+
+    System.out.println("Set of all docs were created!");
 
     double[] centralityValueArray = FileTools.readSelectedGridSearchParameters(
         FileTools.readFileUTF8(centralityValues, true)
@@ -114,7 +129,7 @@ class MainTest {
     double[] LambdaValueArray = FileTools.readSelectedGridSearchParameters(
         FileTools.readFileUTF8(lambdaValues, true)
     );
-    FileTools.createFilePath(baseForRuns+runName);
+//    FileTools.createFilePath(baseForRuns+runName);
 
     int i = 0;
 
@@ -134,48 +149,7 @@ class MainTest {
     RhoMeasure rho = new RhoMeasure();
     System.out.println("RhoMeasure started.");
 
-    System.out.println("Starting up the testing now.");
-
-    // Basically what I need here is to get all the unique doc names from all the relationships
-    // right?
-
-    //SAVE to desired process pipelines
-    Map<String, Doc> mapDocs = new ConcurrentHashMap<>();
-
-    //Basically what this would look like in Streams:
-    // create a set of doc_titles. DONE.
-    // create our concurrent Map. DONE.
-    // For each doc name, run the stream
-
-    String finalBaseForDocs = baseForDocs;
-    allDocNames.parallelStream().forEach((documentName) -> {
-      try {
-        mapDocs.put(documentName,
-            new Doc(FileTools.readFileUTF8(finalBaseForDocs + documentName, true),
-                documentName,
-                wikiLanguage,
-                rel,
-                disamb,
-                segmentation,
-                rho,
-                parser));
-        // sanity
-        System.out.println("Docs in mapDocs: " + mapDocs.size());
-      } catch(IOException e) {
-        System.out.println("A document was not found.");
-        e.printStackTrace();
-        System.exit(1);
-      }
-    });
-
-    System.out.println("All docs were opened");
-
-    // Now save the docs
-    for (String key : mapDocs.keySet()){
-      mapDocs.get(key).serializeDoc();
-    }
-
-    //Create document graphs
+    System.out.println("Creating doc graphs now.");
 
     Set<DocGraph> allDocGraphs = new HashSet<>();
     for (int j = 0; j <200; j++) {
@@ -210,25 +184,5 @@ class MainTest {
     for (DocGraph doc : allDocGraphs){
       doc.serializeDocGraph();
     }
-
-    // provided: all 200 *docGraph[]* have been filled with relevant docs.
-    // all completeTrecTopics are created with important and non-important docs.
-    // all relevant files are opened.
-
-    // Now, run through all the tests.
-    System.out.println("Running tests with values provided for centrality, lambda cutoff.");
-    GridSearchTREC fullTest = new GridSearchTREC(LambdaValueArray,
-        centralityValueArray,
-        0,
-        completeTrecTopics,
-        allDocGraphs,
-        baseTrecScore,
-        runName,
-        TRECEvalPath,
-        goldenQrelsPath);
-
-    fullTest.experimentFactory();
-
-    System.out.println("Run completed!");
   }
 }

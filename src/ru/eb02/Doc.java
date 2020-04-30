@@ -156,7 +156,7 @@ public class Doc {
 
   public static Doc deSerializeDoc(String docName) throws IOException {
     // instantiate a Doc with just hashmaps
-    String[] results = FileTools.readFileUTF8("docs/" + docName + ".ser",
+    String[] results = FileTools.readFileUTF8("docs/" + docName /* ".ser"*/,
         true).split("\n");
     HashMap<Integer, Integer> hii = new HashMap<>();
     // go through each line to instantiate them

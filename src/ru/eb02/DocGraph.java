@@ -64,7 +64,7 @@ public class DocGraph implements Serializable {
     double runningWeight = computeEdgeWeight(docA, docB, rel);
     SimpleEdge testEdge = new SimpleEdge(testVertex1.toString(), testVertex2.toString(), runningWeight);
 
-    if (runningWeight > threshold) {
+    if (runningWeight > threshold && Double.isFinite(runningWeight)) {
       boolean result = graph.addEdge(testEdge, testVertex1, testVertex2,
           EdgeType.UNDIRECTED);
       if (!result) {
@@ -78,11 +78,12 @@ public class DocGraph implements Serializable {
       }
       return true;
     }
+    System.out.println("Edge weight of " + runningWeight + " not added.");
     return false;
   }
 
   /**
-   * Overloaded logic for testing.
+   * Overloaded logic for testing. IF YOU CHANGE THIS CHANGE THE OTHER
    */
   public boolean addEdge(double weight, String docNameA, String docNameB) {
     SimpleVertex testVertex1 = new SimpleVertex(docNameA);
@@ -91,7 +92,8 @@ public class DocGraph implements Serializable {
     if (duplicateEdgeCheck(testVertex1, testVertex2)) return false;
     SimpleEdge testEdge = new SimpleEdge(testVertex1.toString(), testVertex2.toString(), weight);
 
-    if (weight > threshold) {
+    // if the edge is infinite - we don't want it. just don't create it.
+    if (weight > threshold && Double.isFinite(weight)) {
       boolean result = graph.addEdge(testEdge, testVertex1, testVertex2,
           EdgeType.UNDIRECTED);
       if (!result) {
@@ -101,6 +103,7 @@ public class DocGraph implements Serializable {
       }
       return true;
     }
+    System.out.println("Edge weight of " + weight + " not added.");
     return false;
   }
 
@@ -186,6 +189,7 @@ public class DocGraph implements Serializable {
       }
     }
     // return the total size of docA, docB's keys divided by runningWeight
+    // hint: this may return "infinite" values.
     return (double)(docA.size() + docB.size()) / runningWeight;
   }
 

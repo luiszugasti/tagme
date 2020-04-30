@@ -133,8 +133,6 @@ public class DocDeserialize {
     );
 //    FileTools.createFilePath(baseForRuns+runName);
 
-    int i = 0;
-
     // Initiate TAGME modules.
     TagmeConfig.init();
     String wikiLanguage = "en";
@@ -163,6 +161,7 @@ public class DocDeserialize {
 
     //Fill all document graphs with docs (edges) and don't make them duplicate!
     // For each document graph,
+    int i = 0;
     for (DocGraph docGraph : allDocGraphs) {
       // go through each tuple in the corresponding trectopics object,
       for (Tuple t1 : completeTrecTopics[docGraph.getQuery()-1].getDocRankingScores()) {
@@ -179,7 +178,11 @@ public class DocDeserialize {
               rel);
         }
       }
+      System.out.println("graph number " + i + "complete");
     }
+    //NORMALIZE, THEN SERIALIZE! I HAVE EMBEDDED THIS INTO THE SERIALIZE METHOD
+
+
 
     // Above may be slow, but warranted; we may get thru it
     // save the graphs

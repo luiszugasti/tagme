@@ -220,7 +220,7 @@ public class FileTools {
   public static String writeTrecSearchResultsFile(ArrayList<String> output,
       String runName, String lambda1, String lambda2, String centCutoff) {
 
-    String dir = fileNameSchema(GLOBALRESULTSPATH + runName, lambda1,
+    String dir = fileNameSchema(runName, lambda1,
         lambda2, centCutoff);
     // Send payload to this run's folder.
     writeFile(output, dir, null);
@@ -248,7 +248,7 @@ public class FileTools {
       String lambda2, String centCutoff) {
 
     // Send payload to newly created folder.
-    writeFile(output, fileNameSchema(GLOBALRESULTSPATH + runName, lambda1,
+    writeFile(output, fileNameSchema(runName, lambda1,
         lambda2, centCutoff), null);
   }
 
@@ -258,9 +258,9 @@ public class FileTools {
    * @throws IllegalArgumentException in the case the path already exists.
    */
   public static void createFilePath (String runName) {
-    if (!(new File(GLOBALRESULTSPATH + runName).mkdirs())) throw new
+    if (!(new File(runName).mkdirs())) throw new
         IllegalArgumentException("path for: " + runName + " already exists and may contain"
-        + "files.");
+        + " files.");
   }
 
   /**
@@ -291,7 +291,7 @@ public class FileTools {
   private static String fileNameSchema(String runName, String lambda1, String lambda2,
       String centCutoff) {
 
-    return "run- "
+    return GLOBALRESULTSPATH + "run "
         + runName
         + ", l1- "
         + lambda1

@@ -49,9 +49,9 @@ public class trecTopic {
                    .append(" Q0 ")
                    .append(documentName)
                    .append(" ")
-                   .append(score)
-                   .append(" ")
                    .append(Integer.valueOf(size + 1))
+                   .append(" ")
+                   .append(score)
                    .append(" Default\n");
     size ++;
   }
@@ -145,9 +145,9 @@ public class trecTopic {
           .append(" Q0 ")
           .append(entry.getKey())
           .append(" ")
-          .append(entry.getValue())
-          .append(" ")
           .append(iterator.indexOf(entry) + 1)
+          .append(" ")
+          .append(entry.getValue())
           .append(" Default\n");
     }
     // remaining documents: not re-sorted

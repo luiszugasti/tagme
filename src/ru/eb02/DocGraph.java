@@ -30,6 +30,9 @@ public class DocGraph implements Serializable {
   private Graph<SimpleVertex, SimpleEdge> graph;
   private final double threshold;
   private final int query;
+  //NORMALIZATING
+  double max =-1d;
+  double min =99999999999999d;
 
   public int getQuery() {
     return query;
@@ -64,7 +67,7 @@ public class DocGraph implements Serializable {
     double runningWeight = computeEdgeWeight(docA, docB, rel);
     SimpleEdge testEdge = new SimpleEdge(testVertex1.toString(), testVertex2.toString(), runningWeight);
 
-    if (runningWeight > threshold && Double.isFinite(runningWeight)) {
+    if (runningWeight >= threshold && Double.isFinite(runningWeight)) {
       boolean result = graph.addEdge(testEdge, testVertex1, testVertex2,
           EdgeType.UNDIRECTED);
       if (!result) {
@@ -83,7 +86,10 @@ public class DocGraph implements Serializable {
   }
 
   /**
-   * Overloaded logic for testing. IF YOU CHANGE THIS CHANGE THE OTHER
+   * Overloaded logic for testing. IF YOU CHANGE THIS CHANGE THE OTHER. HOWEVER I MEAN IT DOESNT
+   * MATTER ESSENTIALY BECAUSE WE ALREADY HAVE THE GRAPHS
+   *
+   * This automatically normalizes the graph!
    */
   public boolean addEdge(double weight, String docNameA, String docNameB) {
     SimpleVertex testVertex1 = new SimpleVertex(docNameA);
@@ -93,7 +99,7 @@ public class DocGraph implements Serializable {
     SimpleEdge testEdge = new SimpleEdge(testVertex1.toString(), testVertex2.toString(), weight);
 
     // if the edge is infinite - we don't want it. just don't create it.
-    if (weight > threshold && Double.isFinite(weight)) {
+    if (weight >= threshold && Double.isFinite(weight)) {
       boolean result = graph.addEdge(testEdge, testVertex1, testVertex2,
           EdgeType.UNDIRECTED);
       if (!result) {
@@ -101,12 +107,33 @@ public class DocGraph implements Serializable {
             + " was already added.\n" + testEdge.toString() + "\n" + testVertex1.toString() + "\n"
             + testVertex2.toString());
       }
+      //large vs small
+      if (weight < min) {
+        min = weight;
+      } else if(weight > max) {
+        max = weight;
+      }
       return true;
     }
     System.out.println("Edge weight of " + weight + " not added.");
     return false;
   }
 
+  public Graph<SimpleVertex, SimpleEdge> NormalizeEdges() {
+    //iterate thru all the edges in the graph and normalize them
+    Graph<SimpleVertex, SimpleEdge> normalizedGraph = new UndirectedSparseGraph<>();
+
+    Collection<SimpleEdge> all = graph.getEdges();
+    for (SimpleEdge simple : all) {
+      double norm = (simple.getWeight()-min)/(max-min);
+      SimpleEdge test = new SimpleEdge(simple.getVertex1(), simple.getVertex2(), norm);
+      normalizedGraph.addEdge(test,
+          new SimpleVertex(test.getVertex1()),
+          new SimpleVertex(test.getVertex2()));
+    }
+
+    return normalizedGraph;
+  }
 //  public boolean addTuple(Map<Integer,Integer> docA, Map<Integer,Integer> docB,
 //      String docNameA, String docNameB, RelatednessMeasure rel) {
 //    this.addVertex(docNameA);
@@ -229,18 +256,18 @@ public class DocGraph implements Serializable {
     output.add("Threshold: " + threshold);
     output.add("Query: " + query);
 
-    // Invoke printing of edges
-    Collection<SimpleEdge> edges = graph.getEdges();
+    // Invoke printing of edges << BIG CHANGE
+    Collection<SimpleEdge> edges = NormalizeEdges().getEdges();
     // edges now, first is the weight, then vertex1, then vertex2
     for (SimpleEdge edge : edges)
       output.add(edge.getWeight() + " " + edge.getVertex1() + " " + edge.getVertex2());
 
     // print it
-    FileTools.writeFile(output, "docgraphs/" + query + "graph.ser", null);
+    FileTools.writeFile(output, "../docgraphsnormed/" + query + "graph.ser", null);
   }
 
   public static DocGraph deSerializeDocGraph (int query) throws IOException {
-    String results = FileTools.readFileUTF8("docgraphs/" + query + "graph.ser",
+    String results = FileTools.readFileUTF8("../docgraphsnormed/" + query + "graph.ser",
         true);
 
     // parse thru it

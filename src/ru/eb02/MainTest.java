@@ -55,33 +55,33 @@ class MainTest {
         "../Docs/";
 
     // fetch all the related document directories for running a test.
-    for(int i = 0; i < args.length; i++) {
+    for (int i = 0; i < args.length; i++) {
       if ("-baselineSearchResultsPath".equals(args[i])) {
-        baselineSearchResultsPath = args[i+1];
+        baselineSearchResultsPath = args[i + 1];
         i++;
       } else if ("-goldenQrelsPath".equals(args[i])) {
-        goldenQrelsPath = args[i+1];
+        goldenQrelsPath = args[i + 1];
         i++;
       } else if ("-runName".equals(args[i])) {
-        runName = args[i+1];
+        runName = args[i + 1];
         i++;
       } else if ("-TRECEvalPath".equals(args[i])) {
-        TRECEvalPath = args[i+1];
+        TRECEvalPath = args[i + 1];
         i++;
       } else if ("-baselineSearchResultsScorePath".equals(args[i])) {
-        baselineSearchResultsScorePath = args[i+1];
+        baselineSearchResultsScorePath = args[i + 1];
         i++;
       } else if ("-centralityValues".equals(args[i])) {
-        centralityValues = args[i+1];
+        centralityValues = args[i + 1];
         i++;
       } else if ("-lambdaValues".equals(args[i])) {
-        lambdaValues = args[i+1];
+        lambdaValues = args[i + 1];
         i++;
       } else if ("-baseForRuns".equals(args[i])) {
-        baseForRuns = args[i+1];
+        baseForRuns = args[i + 1];
         i++;
       } else if ("-baseForDocs".equals(args[i])) {
-        baseForDocs = args[i+1];
+        baseForDocs = args[i + 1];
         i++;
       }
     }
@@ -114,7 +114,7 @@ class MainTest {
     double[] LambdaValueArray = FileTools.readSelectedGridSearchParameters(
         FileTools.readFileUTF8(lambdaValues, true)
     );
-    FileTools.createFilePath(baseForRuns+runName);
+    FileTools.createFilePath(baseForRuns + runName);
 
     int i = 0;
 
@@ -161,7 +161,7 @@ class MainTest {
                 parser));
         // sanity
         System.out.println("Docs in mapDocs: " + mapDocs.size());
-      } catch(IOException e) {
+      } catch (IOException e) {
         System.out.println("A document was not found.");
         e.printStackTrace();
         System.exit(1);
@@ -171,15 +171,15 @@ class MainTest {
     System.out.println("All docs were opened");
 
     // Now save the docs
-    for (String key : mapDocs.keySet()){
+    for (String key : mapDocs.keySet()) {
       mapDocs.get(key).serializeDoc();
     }
 
     //Create document graphs
 
     Set<DocGraph> allDocGraphs = new HashSet<>();
-    for (int j = 0; j <200; j++) {
-      allDocGraphs.add(new DocGraph(0, j+1));
+    for (int j = 0; j < 200; j++) {
+      allDocGraphs.add(new DocGraph(0, j + 1));
     }
 
     System.out.println("Generation of doc graphs is complete");
@@ -189,9 +189,9 @@ class MainTest {
     // For each document graph,
     for (DocGraph docGraph : allDocGraphs) {
       // go through each tuple in the corresponding trectopics object,
-      for (Tuple t1 : completeTrecTopics[docGraph.getQuery()-1].getDocRankingScores()) {
-        for (Tuple t2 : completeTrecTopics[docGraph.getQuery()-1].getDocRankingScores()) {
-          if(t2.getKey().equals(t1.getKey()))
+      for (Tuple t1 : completeTrecTopics[docGraph.getQuery() - 1].getDocRankingScores()) {
+        for (Tuple t2 : completeTrecTopics[docGraph.getQuery() - 1].getDocRankingScores()) {
+          if (t2.getKey().equals(t1.getKey()))
             continue;
           // Why don't we check for duplicate edges?
           // i.e. edge1: v1 to v2, edged2: v2 to v1
@@ -207,7 +207,7 @@ class MainTest {
 
     // Above may be slow, but warranted; we may get thru it
     // save the graphs
-    for (DocGraph doc : allDocGraphs){
+    for (DocGraph doc : allDocGraphs) {
       doc.serializeDocGraph();
     }
 
@@ -216,19 +216,19 @@ class MainTest {
     // all relevant files are opened.
 
     // Now, run through all the tests.
-    System.out.println("Running tests with values provided for centrality, lambda cutoff.");
-    GridSearchTREC fullTest = new GridSearchTREC(LambdaValueArray,
-        centralityValueArray,
-        0,
-        completeTrecTopics,
-        allDocGraphs,
-        baseTrecScore,
-        runName,
-        TRECEvalPath,
-        goldenQrelsPath);
-
-    fullTest.experimentFactory();
-
-    System.out.println("Run completed!");
+//    System.out.println("Running tests with values provided for centrality, lambda cutoff.");
+//    GridSearchTREC fullTest = new GridSearchTREC(LambdaValueArray,
+//        centralityValueArray,
+//        0,
+//        completeTrecTopics,
+//        allDocGraphs,
+//        baseTrecScore,
+//        runName,
+//        TRECEvalPath,
+//        goldenQrelsPath);
+//
+//    fullTest.experimentFactory();
+//
+//    System.out.println("Run completed!");
   }
 }

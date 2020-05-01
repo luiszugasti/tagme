@@ -69,10 +69,8 @@ public class GridSearchTREC {
   public void experimentFactory() {
     // Create array of LinkedParameters
     ArrayList<LinkedParameters> allPossibleCombinations = new ArrayList<>();
-    for (double lambda : lambdaSteps) {
       for (double centrality : centralitySteps) {
-        allPossibleCombinations.add(new LinkedParameters(lambda, centrality, kill, runName));
-      }
+        allPossibleCombinations.add(new LinkedParameters(lambdaSteps, centrality, kill, runName));
     }
     // Now, we have all the potential choices for running each experiment. Go through each Linked
     // Parameter and run the test.

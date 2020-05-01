@@ -47,39 +47,44 @@ public class LinkedParameters {
     // with the same values of centrality
     System.out.println("whole subtest complete");
     for (int i = 0; i < 10; i++) {
+      ArrayList<String> output = new ArrayList<>();
+      String lambda1Send = String.valueOf(i/10.0);
+      String lambda2Send = String.valueOf(1 - i/10.0);
+      String centralitySend = String.valueOf(centralityCutoff);
       for (ArrayList<Tuple> str : fullResults) {
-      //hardcoded for 1000 test runs
-        ArrayList<String> output = new ArrayList<>();
-        String lambda1Send = String.valueOf(str.get(i).getValue());
-        String lambda2Send = String.valueOf(1-str.get(i).getValue());
-        String centralitySend = String.valueOf(centralityCutoff);
+        //hardcoded for 1000 test runs
+//        ArrayList<String> output = new ArrayList<>();
+//        String lambda1Send = String.valueOf(str.get(i).getValue());
+//        String lambda2Send = String.valueOf(1-str.get(i).getValue());
+//        String centralitySend = String.valueOf(centralityCutoff);
         output.add(str.get(i).getKey());
-
-        // Now we have all the results for 200 docs. Run TREC eval against them and save.
-
-        String pathToResults = FileTools.writeTrecSearchResultsFile(output, runName,
-            lambda1Send, lambda2Send, centralitySend);
-        System.out.println("The path that was sent! " + pathToResults);
-
-        // get the trec results and save them here.
-        ArrayList<String> results = FileTools.trecEvaler(goldenQrels, pathToResults);
-
-        StringBuilder resultrec = new StringBuilder();
-        for (String s : results) {
-          resultrec.append(s).append("\n");
-        }
-
-        trecResult r = FileTools.openTrecScoresFile(resultrec.toString());
-        System.out
-            .println("l1: " + lambda1Send + "l2: " + lambda2Send + " centrality " + centralitySend +
-                " IS MAP BETTER? " + Boolean.toString(r.getMap() > baseline.getMap()) +
-                " IS RPREC BETTER? " + Boolean.toString(r.getRprec() > baseline.getRprec())
-            );
-        //
-        FileTools
-            .writeTrecScoresFile(results, runName + "TREC", lambda1Send, lambda2Send,
-                centralitySend);
       }
+      // Now we have all the results for 200 docs. Run TREC eval against them and save.
+
+      String pathToResults = FileTools.writeTrecSearchResultsFile(output, runName,
+          lambda1Send, lambda2Send, centralitySend);
+      System.out.println("The path that was sent! " + pathToResults);
+
+      // get the trec results and save them here.
+      ArrayList<String> results = FileTools.trecEvaler(goldenQrels, pathToResults);
+
+      StringBuilder resultrec = new StringBuilder();
+      for (String s : results) {
+        resultrec.append(s).append("\n");
+      }
+
+      trecResult r = FileTools.openTrecScoresFile(resultrec.toString());
+      System.out
+          .println("l1: " + lambda1Send + " centrality " + centralitySend +
+              " IS MAP BETTER? " + Boolean.toString(r.getMap() > baseline.getMap()) +
+              " IS RPREC BETTER? " + Boolean.toString(r.getRprec() > baseline.getRprec()) +
+              " MAP : " + r.getMap() + " RPREC " + r.getRprec()
+          );
+      //
+      FileTools
+          .writeTrecScoresFile(results, runName + "TREC", lambda1Send, lambda2Send,
+              centralitySend);
+
     }
   }
 
